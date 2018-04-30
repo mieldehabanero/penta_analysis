@@ -152,6 +152,7 @@ void fit_lambda_0(){
 	std::string data_path = "Resultados/candidatos_lambda_0.root";
 	std::string ntuple_name = "candidatos_lambda_0";
 	std::string variable_name = "lambda_0_mass";
+	std::string variable_title = "#p^{+} #pi^{-} Mass";
 	std::string variable_description = "m(#p^{+} #pi^{-}) [GeV]";
 	std::vector<float> variable_range = {1.10, 1.13};
 	std::vector<float> mean_range = {1.10, 1.11593, 1.13};
@@ -162,5 +163,5 @@ void fit_lambda_0(){
 	std::vector<vector<float>> poly_range = {{731062*2, 0, 664602*3}};
 	unsigned int bin_number = 50;
 	
-	fit_double_gauss(data_path, ntuple_name, variable_name, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
+	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
 }

@@ -33,6 +33,7 @@ void fit_k_short(){
 	std::string data_path = "Resultados/candidatos_ks.root";
 	std::string ntuple_name = "candidatos_ks";
 	std::string variable_name = "ks_mass";
+	std::string variable_title = "#pi^{+} #pi^{-}Mass";
 	std::string variable_description = "m(#pi^{+} #pi^{-}) [GeV]";
 	std::vector<float> variable_range = {0.44, 0.56};
 	std::vector<float> mean_range = {0.4912, 0.44, 0.56};
@@ -43,5 +44,5 @@ void fit_k_short(){
 	std::vector<float> background_fraction = {0.525, 0., 1.};
 	unsigned int bin_number = 48;
 	
-	fit_double_gauss(data_path, ntuple_name, variable_name, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
+	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
 }

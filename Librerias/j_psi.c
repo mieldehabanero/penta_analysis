@@ -153,6 +153,7 @@ void fit_jpsi(){
 	std::string data_path = "Resultados/candidatos_jpsi.root";
 	std::string ntuple_name = "candidatos_jpsi";
 	std::string variable_name = "jpsi_mass";
+	std::string variable_title = "mu^{+} #mu^{-} Mass";
 	std::string variable_description = "m(#mu^{+} #mu^{-}) [GeV]";
 	std::vector<float> variable_range = {2.95, 3.25};
 	std::vector<float> mean_range = {3.091, 2.95, 3.25};
@@ -163,5 +164,5 @@ void fit_jpsi(){
 	std::vector<float> background_fraction = {0.005, 0., 0.012};
 	unsigned int bin_number = 30;
 	
-	fit_double_gauss(data_path, ntuple_name, variable_name, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
+	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
 }
