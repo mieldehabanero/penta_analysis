@@ -86,7 +86,7 @@ void fit_double_gauss(std::string data_path, std::string ntuple_name, std::strin
 	canvas_hpull->Print(path_hpull.data());
 	
 	//Print structure of composite p.d.f.
-	model.Print("t") ;
+	model.Print("t");
 }
 
 void fit_breit_wigner(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> gamma_range, std::vector<vector<float>> d0_params, std::vector<float> background_fraction, unsigned int bin_number){
@@ -456,7 +456,11 @@ void fit_gauss(std::string data_path, std::string ntuple_name, std::string varia
 	
 }
 
-void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> d0_params, unsigned int bin_number){
+void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, std::vector<float> d0_params, unsigned int bin_number){
+	//Nombre y Título del modelo
+	std::string fit_name = "d0_background";
+	std::string fit_title = "DØ Background";
+	
 	//Lee los datos filtrados del archivo
 	TFile* file = new TFile(data_path.data(), "READ");
 	TTree* ntuple = nullptr;
@@ -465,40 +469,57 @@ void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::strin
 	//Variable independiente
 	RooRealVar mass(variable_name.data(), variable_description.data(), variable_range[0], variable_range[1]) ;
 	
-	//Background DØ
+	//Parámetros para el modelo Background de DØ
 	RooRealVar m_thr("m_thr", "m_thr", d0_params[0]);
 	RooRealVar c1("c1", "c1", d0_params[1]);
 	RooRealVar c2("c2", "c2", d0_params[2]);
 	RooRealVar b("b", "b", d0_params[3]);
-	RooGenericPdf f_bgr("f_bgr","background model", "lambda_b_mass * pow(((pow(lambda_b_mass, 2) / pow(m_thr, 2)) -1), c1) * exp(-lambda_b_mass * c2) * (1 - exp(-(lambda_b_mass - m_thr)/b))", RooArgSet(mass, m_thr, c1, c2, b));
+	RooGenericPdf model("model","background model", "lambda_b_mass * pow(((pow(lambda_b_mass, 2) / pow(m_thr, 2)) -1), c1) * exp(-lambda_b_mass * c2) * (1 - exp(-(lambda_b_mass - m_thr)/b))", RooArgSet(mass, m_thr, c1, c2, b));
 	
-	//Dataset
+	//Se crea el data set
 	RooDataSet* data = new RooDataSet("data", "datos del 2012 filtrados", ntuple, mass);
 	
-	//Dibuja el histograma
-	RooPlot* frame_data = mass.frame(Title(variable_description.data()), Bins(bin_number));
+	//Se hace el ajuste
+	RooFitResult* result = model.fitTo(*data, Save(kTRUE), NumCPU(4));
 	
-	//Se dibujan los datos en el frame y se ajusta el modelo
-	data->plotOn(frame_data);
-	f_bgr.fitTo(*data, NumCPU(4));
-	f_bgr.plotOn(frame_data, LineColor(kBlue));
+	//Se dibujan los datos, el ajuste, y sus componentes
+	RooPlot* frame_fit = mass.frame(Title(variable_description.data()), Bins(bin_number));
+	data->plotOn(frame_fit);
+	model.plotOn(frame_fit, LineColor(kBlue), NumCPU(4));
+	RooHist* hpull = frame_fit->pullHist();
 	
-	//	 Overlay the background component of model with a dashed line
-	RooHist* hpull = frame_data->pullHist() ;
-	RooPlot* frame_hpull = mass.frame(Title("Background DØ Pull Distribution")) ;
-	frame_hpull->addPlotable(hpull, "PZ");
+	//Crea el pull para el ajuste
+	//	RooHist* hpull = frame_fit->pullHist();
+	std::string frame_hpull_title = variable_description + " Pull Distribution";
+	RooPlot* frame_hpull = mass.frame(Title(frame_hpull_title.data()));
+	frame_hpull->addPlotable(hpull,"PY");
 	
-	//	 Print structure of composite p.d.f.
-	f_bgr.Print("t") ;
+	//Se generan los nombres y títulos de los canvas
+	std::string canvas_name = variable_name + "_" + fit_name;
+	std::string canvas_title = variable_title + " " + fit_title + " Fit";
+	std::string canvas_hpull_name = variable_name + "_" + fit_name + "_hpull";
+	std::string canvas_hpull_title = canvas_title + " Pull Distribution";
 	
-	TCanvas* canvas_data = new TCanvas("fit_pico", "Background DØ", 600, 600);
-	TCanvas* canvas_hpull = new TCanvas("fit_pico2", "Background DØ Pull Distribution", 600, 600);
-	canvas_data->cd();
-	frame_data->GetYaxis()->SetTitleOffset(1.6);
-	frame_data->Draw();
+	//Se crean los canvas y se dibuja todo
+	TCanvas* canvas_fit = new TCanvas(canvas_name.data(), canvas_title.data(), 600, 600) ;
+	canvas_fit->cd();
+	frame_fit->GetYaxis()->SetTitleOffset(1.6);
+	gPad->SetTicks(1, 1);
+	frame_fit->Draw();
 	
+	TCanvas* canvas_hpull = new TCanvas(canvas_hpull_name.data(), canvas_hpull_title.data(), 600, 600);
 	canvas_hpull->cd();
 	frame_hpull->GetYaxis()->SetTitleOffset(1.6);
 	gPad->SetTicks(1, 1);
 	frame_hpull->Draw();
+
+	//Se guardan los histogramas en archivos
+	std::string path_folder = "Resultados/Histogramas/Fit/";
+	std::string path_fit = path_folder + canvas_name + ".png";
+	std::string path_hpull = path_folder + canvas_hpull_name + ".png";
+	canvas_fit->Print(path_fit.data());
+	canvas_hpull->Print(path_hpull.data());
+	
+	//Print structure of composite p.d.f.
+	model.Print("t");
 }

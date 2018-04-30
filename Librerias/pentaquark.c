@@ -74,14 +74,16 @@ void fit_pentaquark_gauss(){
 	fit_gauss(data_path, ntuple_name, variable_name, variable_description, variable_range, mean_range, sigma_range, d0_params, background_fraction, bin_number);
 }
 
+//para pruebas fit_pentaquark_ruido(0.130852, 2.07974, 0.00482206)
 void fit_pentaquark_ruido(float c1, float c2, float b){
 	std::string data_path = "Resultados/candidatos_lambda_b.root";
 	std::string ntuple_name = "candidatos_lambda_b";
 	std::string variable_name = "lambda_b_mass";
+	std::string variable_title = "J/#Psi #Lambda Mass";
 	std::string variable_description = "m(J/#Psi #Lambda) [GeV]";
 	std::vector<float> variable_range = {JPSI_LAMBDA_THRESHOLD + 0.004, 4.7};
 	std::vector<float> d0_params = {JPSI_LAMBDA_THRESHOLD, c1, c2, b};
 	unsigned int bin_number = 45;
 	 
-	fit_polinomio_d0(data_path, ntuple_name, variable_name, variable_description, variable_range, d0_params, bin_number);
+	fit_polinomio_d0(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, d0_params, bin_number);
 }
