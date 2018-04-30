@@ -18,10 +18,7 @@
 
 // Headers needed by this particular selector
 #include <vector>
-
 #include <string>
-
-
 
 class main : public TSelector {
 public :
@@ -145,10 +142,10 @@ public :
    TTreeReaderValue<Int_t> nTrgL1L = {fReader, "nTrgL1L"};
    TTreeReaderArray<Char_t> triggersL = {fReader, "triggersL"};
    TTreeReaderArray<Char_t> triggersL1L = {fReader, "triggersL1L"};
-   TTreeReaderArray<string> triggersMuPL = {fReader, "triggersMuPL"};
-   TTreeReaderArray<string> triggersMuML = {fReader, "triggersMuML"};
-   TTreeReaderArray<string> triggersL1L2_MuPL = {fReader, "triggersL1L2_MuPL"};
-   TTreeReaderArray<string> triggersL1L2_MuML = {fReader, "triggersL1L2_MuML"};
+   TTreeReaderArray<std::string> triggersMuPL = {fReader, "triggersMuPL"};
+   TTreeReaderArray<std::string> triggersMuML = {fReader, "triggersMuML"};
+   TTreeReaderArray<std::string> triggersL1L2_MuPL = {fReader, "triggersL1L2_MuPL"};
+   TTreeReaderArray<std::string> triggersL1L2_MuML = {fReader, "triggersL1L2_MuML"};
    TTreeReaderArray<float> priRfVtxX = {fReader, "priRfVtxX"};
    TTreeReaderArray<float> priRfVtxY = {fReader, "priRfVtxY"};
    TTreeReaderArray<float> priRfVtxZ = {fReader, "priRfVtxZ"};
