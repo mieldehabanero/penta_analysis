@@ -16,5 +16,6 @@ void fit_pentaquark_breit_wigner();
 void fit_pentaquark_breit_wigner_fija();
 void fit_pentaquark_gauss();
 void fit_pentaquark_gauss_fija();
+void fit_pentaquark_ruido(float c1, float c2, float b);
 
 #endif /* pentaquark_h */
