@@ -49,11 +49,12 @@ void fit_double_gauss(std::string data_path, std::string ntuple_name, std::strin
 	RooPlot* frame_fit = mass.frame(Title(variable_description.data()), Bins(bin_number));
 	data->plotOn(frame_fit);
 	model.plotOn(frame_fit, LineColor(kBlue), NumCPU(4));
+	RooHist* hpull = frame_fit->pullHist();
 	model.plotOn(frame_fit, Components(poly),LineStyle(kDashed), NumCPU(4));
 	model.plotOn(frame_fit, Components(RooArgSet(gaussian_1, gaussian_2)), LineStyle(kDotted), LineColor(kRed), NumCPU(4));
 	
 	//Crea el pull para el ajuste
-	RooHist* hpull = frame_fit->pullHist();
+//	RooHist* hpull = frame_fit->pullHist();
 	std::string frame_hpull_title = "Pull Distribution (" + fit_title + ")";
 	RooPlot* frame_hpull = mass.frame(Title(frame_hpull_title.data()));
 	frame_hpull->addPlotable(hpull,"PY");
