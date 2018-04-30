@@ -40,4 +40,6 @@ void fit_gauss_fija(std::string data_path, std::string ntuple_name, std::string 
 
 void fit_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma_range, std::vector<vector<float>> d0_params, std::vector<float> background_fraction, unsigned int bin_number);
 
+void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> d0_params, unsigned int bin_number);
+
 #endif /* fit_h */

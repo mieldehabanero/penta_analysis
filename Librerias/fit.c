@@ -435,3 +435,50 @@ void fit_gauss(std::string data_path, std::string ntuple_name, std::string varia
 	
 	
 }
+
+void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> d0_params, unsigned int bin_number){
+	//Lee los datos filtrados del archivo
+	TFile* file = new TFile(data_path.data(), "READ");
+	TTree* ntuple = nullptr;
+	file->GetObject(ntuple_name.data(), ntuple);
+	
+	//Variable independiente
+	RooRealVar mass(variable_name.data(), variable_description.data(), variable_range[0], variable_range[1]) ;
+	
+	//Background DØ
+	RooRealVar m_thr("m_thr", "m_thr", d0_params[0]);
+	RooRealVar c1("c1", "c1", d0_params[1]);
+	RooRealVar c2("c2", "c2", d0_params[2]);
+	RooRealVar b("b", "b", d0_params[3]);
+	RooGenericPdf f_bgr("f_bgr","background model", "lambda_b_mass * pow(((pow(lambda_b_mass, 2) / pow(m_thr, 2)) -1), c1) * exp(-lambda_b_mass * c2) * (1 - exp(-(lambda_b_mass - m_thr)/b))", RooArgSet(mass, m_thr, c1, c2, b));
+	
+	//Dataset
+	RooDataSet* data = new RooDataSet("data", "datos del 2012 filtrados", ntuple, mass);
+	
+	//Dibuja el histograma
+	RooPlot* frame_data = mass.frame(Title(variable_description.data()), Bins(bin_number));
+	
+	//Se dibujan los datos en el frame y se ajusta el modelo
+	data->plotOn(frame_data);
+	f_bgr.fitTo(*data, NumCPU(4));
+	f_bgr.plotOn(frame_data, LineColor(kBlue));
+	
+	//	 Overlay the background component of model with a dashed line
+	RooHist* hpull = frame_data->pullHist() ;
+	RooPlot* frame_hpull = mass.frame(Title("Background DØ Pull Distribution")) ;
+	frame_hpull->addPlotable(hpull, "PZ");
+	
+	//	 Print structure of composite p.d.f.
+	f_bgr.Print("t") ;
+	
+	TCanvas* canvas_data = new TCanvas("fit_pico", "Background DØ", 600, 600);
+	TCanvas* canvas_hpull = new TCanvas("fit_pico2", "Background DØ Pull Distribution", 600, 600);
+	canvas_data->cd();
+	frame_data->GetYaxis()->SetTitleOffset(1.6);
+	frame_data->Draw();
+	
+	canvas_hpull->cd();
+	frame_hpull->GetYaxis()->SetTitleOffset(1.6);
+	gPad->SetTicks(1, 1);
+	frame_hpull->Draw();
+}
