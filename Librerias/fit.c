@@ -7,7 +7,7 @@
 
 #include "fit.h"
 
-void fit_double_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma1_range, std::vector<float> sigma2_range, std::vector<float> sigma_fraction, std::vector<vector<float>> poly_range, std::vector<float> background_fraction, unsigned int bin_number){
+void fit_double_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma1_range, std::vector<float> sigma2_range, std::vector<float> sigma_fraction, std::vector<vector<float>> poly_range, std::vector<float> background_fraction, unsigned int bin_number){
 	//Nombre y Título del modelo
 	std::string fit_name = "double_gaussian";
 	std::string fit_title = "Double Gaussian";
@@ -55,15 +55,15 @@ void fit_double_gauss(std::string data_path, std::string ntuple_name, std::strin
 	
 	//Crea el pull para el ajuste
 //	RooHist* hpull = frame_fit->pullHist();
-	std::string frame_hpull_title = "Pull Distribution (" + fit_title + ")";
+	std::string frame_hpull_title = variable_description + " Pull Distribution";
 	RooPlot* frame_hpull = mass.frame(Title(frame_hpull_title.data()));
 	frame_hpull->addPlotable(hpull,"PY");
 	
 	//Se generan los nombres y títulos de los canvas
 	std::string canvas_name = variable_name + "_" + fit_name;
-	std::string canvas_title = "Fit " + fit_title + " " + variable_name;
+	std::string canvas_title = variable_title + " " + fit_title + " Fit";
 	std::string canvas_hpull_name = variable_name + "_" + fit_name + "_hpull";
-	std::string canvas_hpull_title = canvas_title + "Pull Distribution";
+	std::string canvas_hpull_title = canvas_title + " Pull Distribution";
 	
 	//Se crean los canvas y se dibuja todo
 	TCanvas* canvas_fit = new TCanvas(canvas_name.data(), canvas_title.data(), 600, 600) ;

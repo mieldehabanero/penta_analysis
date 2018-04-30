@@ -30,7 +30,7 @@
 using namespace std;
 using namespace RooFit;
 
-void fit_double_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma1_range, std::vector<float> sigma2_range, std::vector<float> sigma_fraction, std::vector<vector<float>> poly_range, std::vector<float> background_fraction, unsigned int bin_number);
+void fit_double_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma1_range, std::vector<float> sigma2_range, std::vector<float> sigma_fraction, std::vector<vector<float>> poly_range, std::vector<float> background_fraction, unsigned int bin_number);
 
 void fit_breit_wigner(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> gamma_range, std::vector<vector<float>> d0_range, std::vector<float> background_fraction, unsigned int bin_number);
 
