@@ -61,7 +61,7 @@ void fit_double_gauss(std::string data_path, std::string ntuple_name, std::strin
 	//Se generan los nombres y títulos de los canvas
 	std::string canvas_name = variable_name + "_" + fit_name;
 	std::string canvas_title = "Fit " + fit_title + " " + variable_name;
-	std::string canvas_hpull_name = variable_name + "_" + fit_name "_hpull";
+	std::string canvas_hpull_name = variable_name + "_" + fit_name + "_hpull";
 	std::string canvas_hpull_title = canvas_title + "Pull Distribution";
 	
 	//Se crean los canvas y se dibuja todo
