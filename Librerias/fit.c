@@ -8,6 +8,10 @@
 #include "fit.h"
 
 void fit_double_gauss(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> sigma1_range, std::vector<float> sigma2_range, std::vector<float> sigma_fraction, std::vector<vector<float>> poly_range, std::vector<float> background_fraction, unsigned int bin_number){
+	//Nombre y Título del modelo
+	std::string fit_name = "double_gaussian";
+	std::string fit_title = "Double Gaussian";
+	
 	//Lee los datos filtrados del archivo
 	TFile *file = new TFile(data_path.data(), "READ");
 	TTree *ntuple = nullptr;
@@ -20,53 +24,68 @@ void fit_double_gauss(std::string data_path, std::string ntuple_name, std::strin
 	RooRealVar mean("mean", "mean of gaussian", mean_range[0], mean_range[1], mean_range[2]);
 	RooRealVar sigma1("sigma1", "width of gaussian", sigma1_range[0], sigma1_range[1], sigma1_range[2]);
 	RooRealVar sigma2("sigma2", "width of gaussian", sigma2_range[0], sigma2_range[1], sigma2_range[2]);
+	RooGaussian gaussian_1("gaussian_1", "Signal component 1", mass, mean, sigma1);
+	RooGaussian gaussian_2("gaussian_2", "Signal component 2", mass, mean, sigma2);
 	
-	RooGaussian sig1("sig1", "Signal component 1", mass, mean, sigma1);
-	RooGaussian sig2("sig2", "Signal component 2", mass, mean, sigma2);
-	
-	
-	//Parámetros para el ruido (Pol(2))
+	//Parámetros para el ruido (Pol(1))
 	RooRealVar a1("a1", "coef de orden 1", poly_range[0][0], poly_range[0][1], poly_range[0][2]);
 	RooPolynomial poly("poly", "bkg PDF", mass, RooArgSet(a1));
 	
 	//Se crea el data set
-	RooDataSet *data = new RooDataSet("data", "datos del 2012 filtrados", ntuple, mass);
+	RooDataSet *data = new RooDataSet("data", "Datos del 2012 filtrados", ntuple, mass);
 	
 	//Suma las PDFs de la señal
-	RooRealVar sig1frac("sig1frac","fraction of component 1 in signal", sigma_fraction[0], sigma_fraction[1], sigma_fraction[2]);
-	RooAddPdf sig("sig","Signal",RooArgList(sig1, sig2), sig1frac) ;
+	RooRealVar gaussian_1_frac("gaussian_1_frac","Fraction of Gaussian 1 in signal", sigma_fraction[0], sigma_fraction[1], sigma_fraction[2]);
+	RooAddPdf double_gaussian(fit_name.data(),"Signal",RooArgList(gaussian_1, gaussian_2), gaussian_1_frac) ;
 	
 	//Suma señal con el background
-	RooRealVar bkgfrac("bkgfrac","fraction of background", background_fraction[0], background_fraction[1], background_fraction[2]);
-	RooAddPdf  model("model","g1+g2+a", RooArgList(poly, sig), bkgfrac);
+	RooRealVar bkgfrac("bkgfrac","Fraction of background", background_fraction[0], background_fraction[1], background_fraction[2]);
+	RooAddPdf  model("model","g1+g2+a", RooArgList(poly, double_gaussian), bkgfrac);
 	
+	//Se hace el ajuste
+	RooFitResult* result = model.fitTo(*data, Save(kTRUE), NumCPU(4));
 	
-	//Se grafican los datos y se hace el fit
-	RooPlot* frame1 = mass.frame(Title(variable_description.data()), Bins(bin_number));
-	data->plotOn(frame1);
-	model.fitTo(*data,NumCPU(4),Timer(kTRUE));
+	//Se dibujan los datos, el ajuste, y sus componentes
+	RooPlot* frame_fit = mass.frame(Title(variable_description.data()), Bins(bin_number));
+	data->plotOn(frame_fit);
+	model.plotOn(frame_fit, LineColor(kBlue), NumCPU(4));
+	model.plotOn(frame_fit, Components(poly),LineStyle(kDashed), NumCPU(4));
+	model.plotOn(frame_fit, Components(RooArgSet(gaussian_1, gaussian_2)), LineStyle(kDotted), LineColor(kRed), NumCPU(4));
 	
-	//Formato bonito para el histograma
-	model.plotOn(frame1, LineColor(kBlue), NumCPU(4));
-	model.plotOn(frame1, Components(poly),LineStyle(kDashed), NumCPU(4));
-	model.plotOn(frame1, Components(RooArgSet(sig1, sig2)), LineStyle(kDotted), LineColor(kRed), NumCPU(4));
+	//Crea el pull para el ajuste
+	RooHist* hpull = frame_fit->pullHist();
+	std::string frame_hpull_title = "Pull Distribution (" + fit_title + ")";
+	RooPlot* frame_hpull = mass.frame(Title(frame_hpull_title.data()));
+	frame_hpull->addPlotable(hpull,"PY");
 	
-	// Print structure of composite p.d.f.
-	model.Print("t") ;
+	//Se generan los nombres y títulos de los canvas
+	std::string canvas_name = variable_name + "_" + fit_name;
+	std::string canvas_title = "Fit " + fit_title + " " + variable_name;
+	std::string canvas_hpull_name = variable_name + "_" + fit_name "_hpull";
+	std::string canvas_hpull_title = canvas_title + "Pull Distribution";
 	
-	std::string canvas_name = "fit_double_gauss_" + variable_name;
-	std::string canvas_title = "Fit Doble Gaussiana" + variable_name;
-	TCanvas* c1 = new TCanvas(canvas_name.data(), canvas_title.data(), 600, 600) ;
-	
-	c1->cd();
-	frame1->GetYaxis()->SetTitleOffset(1.6);
+	//Se crean los canvas y se dibuja todo
+	TCanvas* canvas_fit = new TCanvas(canvas_name.data(), canvas_title.data(), 600, 600) ;
+	canvas_fit->cd();
+	frame_fit->GetYaxis()->SetTitleOffset(1.6);
 	gPad->SetTicks(1, 1);
-	frame1->Draw();
+	frame_fit->Draw();
 	
-	std::string histogram_path = "Resultados/Histogramas/";
-	std::string filename = " (Doble Gaussiana)";
-	TString path_gauss = histogram_path + variable_name + filename + ".png";
-	c1->Print(path_gauss.Data());
+	TCanvas* canvas_hpull = new TCanvas(canvas_hpull_name.data(), canvas_hpull_title.data(), 600, 600);
+	canvas_hpull->cd();
+	frame_hpull->GetYaxis()->SetTitleOffset(1.6);
+	gPad->SetTicks(1, 1);
+	frame_hpull->Draw();
+	
+	//Se guardan los histogramas en archivos
+	std::string path_folder = "Resultados/Histogramas/Fit/";
+	std::string path_fit = path_folder + canvas_name + ".png";
+	std::string path_hpull = path_folder + canvas_hpull_name + ".png";
+	canvas_fit->Print(path_fit.data());
+	canvas_hpull->Print(path_hpull.data());
+	
+	//Print structure of composite p.d.f.
+	model.Print("t") ;
 }
 
 void fit_breit_wigner(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_description, std::vector<float> variable_range, std::vector<float> mean_range, std::vector<float> gamma_range, std::vector<vector<float>> d0_params, std::vector<float> background_fraction, unsigned int bin_number){
