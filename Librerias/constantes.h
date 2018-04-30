@@ -49,6 +49,8 @@
 //#define LAMBDA_B_MASS_UPPER_LIMIT 6.5
 #define LAMBDA_B_MASS_LOWER_LIMIT 4.200
 
+#define JPSI_LAMBDA_THRESHOLD J_PSI_MASS + LAMBDA_0_MASS
+
 //Valor original de la ventana de masa
 //#define LAMBDA_B_MASS_LOWER_LIMIT 5.40
 
