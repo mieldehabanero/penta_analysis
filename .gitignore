@@ -1,3 +1,6 @@
 Datos
 Resultados
 .DS_Store
+*.d
+*.so
+*.pcm
