@@ -39,7 +39,7 @@ int aplica_cortes_lambda_b(float lb_pt, float lb_prob, float lb_mass) {
 		return 0;
 	}
 	
-	//Se calcula si la masa del Lambda 0 esta dentro del rango (5.40GeV < M_jPsi < 5.84GeV)
+	//Se calcula si la masa del Lambda b esta dentro del rango (5.40GeV < M_jPsi < 5.84GeV)
 	int pasa_corte_masa = corte_masa_lambda_b(lb_mass);
 	if(!pasa_corte_masa) {
 		return 0;
@@ -86,8 +86,8 @@ void fit_lambda_b(){
 	std::string ntuple_name = "candidatos_lambda_b";
 	std::string variable_name = "lambda_b_mass";
 	std::string variable_description = "m(J/#Psi #Lambda) [GeV]";
-	std::vector<float> variable_range = {5.4, 5.85};
-	std::vector<float> mean_range = {5.619, 5.4, 5.85};
+	std::vector<float> variable_range = {5.4, 5.84};
+	std::vector<float> mean_range = {5.619, 5.4, 5.84};
 	std::vector<float> sigma1_range = {0.012, 0.001, 1};
 	std::vector<float> sigma2_range = {0.030, 0.001, 1};
 	std::vector<float> sigma_fraction = {0.578, 0., 1.};
