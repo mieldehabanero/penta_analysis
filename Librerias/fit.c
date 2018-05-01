@@ -531,3 +531,39 @@ void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::strin
 	//Print structure of composite p.d.f.
 	model.Print("t");
 }
+
+void solo_datos(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, unsigned int bin_number){
+	//Nombre y Título del modelo
+	std::string fit_name = "mass_distribution";
+	std::string fit_title = "Mass Distribution";
+	
+	//Lee los datos filtrados del archivo
+	TFile* file = new TFile(data_path.data(), "READ");
+	TTree* ntuple = nullptr;
+	file->GetObject(ntuple_name.data(), ntuple);
+	
+	//Variable independiente
+	RooRealVar mass(variable_name.data(), variable_description.data(), variable_range[0], variable_range[1]) ;
+	
+	//Se crea el data set
+	RooDataSet* data = new RooDataSet("data", "datos del 2012 filtrados", ntuple, mass);
+	
+	//Se dibujan los datos, el ajuste, y sus componentes
+	RooPlot* frame_fit = mass.frame(Title(variable_description.data()), Bins(bin_number));
+	data->plotOn(frame_fit);
+	
+	//Se generan los nombres y títulos de los canvas
+	std::string canvas_name = variable_name + "_" + fit_name;
+	std::string canvas_title = variable_title + " " + fit_title;
+	
+	TCanvas* canvas_fit = new TCanvas(canvas_name.data(), canvas_title.data(), 600, 600) ;
+	canvas_fit->cd();
+	frame_fit->GetYaxis()->SetTitleOffset(1.6);
+	gPad->SetTicks(1, 1);
+	frame_fit->Draw();
+	
+	//Se guardan los histogramas en archivos
+	std::string path_folder = "Resultados/Histogramas/Fit/";
+	std::string path_fit = path_folder + canvas_name + ".png";
+	canvas_fit->Print(path_fit.data());
+}

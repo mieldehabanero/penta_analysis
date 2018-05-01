@@ -42,4 +42,6 @@ void fit_gauss(std::string data_path, std::string ntuple_name, std::string varia
 
 void fit_polinomio_d0(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, std::vector<float> d0_params, unsigned int bin_number);
 
+void solo_datos(std::string data_path, std::string ntuple_name, std::string variable_name, std::string variable_title, std::string variable_description, std::vector<float> variable_range, unsigned int bin_number);
+
 #endif /* fit_h */
