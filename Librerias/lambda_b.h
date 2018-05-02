@@ -12,7 +12,9 @@
 #ifndef lambda_b_h
 #define lambda_b_h
 
-int es_candidato_lambda_b(std::vector<float>jpsi_p, std::vector<float>lambda_0_p, float lb_prob, float lb_mass);
+#include "Librerias/Particles/LambdaBCandidate.hpp"
+
+int es_candidato_lambda_b(LambdaBCandidate *lambda_b);
 void fit_lambda_b();
 
 #endif /* lambda_b_h */

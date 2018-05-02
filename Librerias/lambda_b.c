@@ -8,39 +8,34 @@
 #include <stdio.h>
 #include <string>
 #include "lambda_b.h"
-#include "operaciones.h"
 #include "fit.h"
 
-int aplica_cortes_lambda_b(float lb_pt, float lb_prob, float lb_mass);
-int corte_pt_lambda_b(float lb_pt);
-int corte_prob_lambda_b(float prob);
-int corte_masa_lambda_b(float masa);
+int aplica_cortes_lambda_b(LambdaBCandidate *lambda_b);
+int corte_pt_lambda_b(LambdaBCandidate *lambda_b);
+int corte_prob_lambda_b(LambdaBCandidate *lambda_b);
+int corte_masa_lambda_b(LambdaBCandidate *lambda_b);
 
-int es_candidato_lambda_b(std::vector<float>jpsi_p, std::vector<float>lambda_0_p, float lb_prob, float lb_mass) {
+int es_candidato_lambda_b(LambdaBCandidate *lambda_b) {
 	
-	float lambda_b_p[3] = {jpsi_p[0] + lambda_0_p[0], jpsi_p[1] + lambda_0_p[1], jpsi_p[2] + lambda_0_p[2]};
-	float lambda_b_pt[3] = {lambda_b_p[0], lambda_b_p[1]};
-	float lambda_b_pt_magnitude = norma_dos(lambda_b_pt[0], lambda_b_pt[1]);
-	
-	int es_candidato = aplica_cortes_lambda_b(lambda_b_pt_magnitude, lb_prob, lb_mass);
+	int es_candidato = aplica_cortes_lambda_b(lambda_b);
 	return es_candidato;
 }
 
-int aplica_cortes_lambda_b(float lb_pt, float lb_prob, float lb_mass) {
+int aplica_cortes_lambda_b(LambdaBCandidate *lambda_b) {
 	//Se calcula si el pt están dentro del rango (pL_b > 10GeV)
-	int pasa_corte_pt = corte_pt_lambda_b(lb_pt);
+	int pasa_corte_pt = corte_pt_lambda_b(lambda_b);
 	if(!pasa_corte_pt) {
 		return 0;
 	}
 	
 	//Se calcula si la probabilidad de un vertice común es >??
-	int pasa_corte_prob = corte_prob_lambda_b(lb_prob);
+	int pasa_corte_prob = corte_prob_lambda_b(lambda_b);
 	if(!pasa_corte_prob) {
 		return 0;
 	}
 	
 	//Se calcula si la masa del Lambda b esta dentro del rango (5.40GeV < M_jPsi < 5.84GeV)
-	int pasa_corte_masa = corte_masa_lambda_b(lb_mass);
+	int pasa_corte_masa = corte_masa_lambda_b(lambda_b);
 	if(!pasa_corte_masa) {
 		return 0;
 	}
@@ -50,22 +45,22 @@ int aplica_cortes_lambda_b(float lb_pt, float lb_prob, float lb_mass) {
 
 
 //Checa si el pt del Lambda b esta en el rango requerido, sí = 1, no = 0.
-int corte_pt_lambda_b(float lb_pt) {
+int corte_pt_lambda_b(LambdaBCandidate *lambda_b) {
 	//Valores en GeV
 	
 	//Se calcula si los pts están dentro del rango (pt_π > 0.3GeV, pt_p > 1.0GeV, y pt_pπ > 1.3GeV)
-	if (lb_pt > LAMBDA_B_PT_CUT){
+	if (lambda_b->getTransverseMomentum() > LAMBDA_B_PT_CUT){
 		return 1;
 	}
 	return 0;
 }
 
 //Checa si la probabilidad de que µ+µ- vengan del mismo vértice, sí = 1, no = 0.
-int corte_prob_lambda_b(float prob) {
+int corte_prob_lambda_b(LambdaBCandidate *lambda_b) {
 	//Valores en GeV
 	
 	//Se calcula si la probabilidad es mayor al cuttoff
-	if (prob > LAMBDA_B_PROB_CUT){
+	if (lambda_b->getProbability() > LAMBDA_B_PROB_CUT){
 		return 1;
 	}
 	return 0;
@@ -73,9 +68,9 @@ int corte_prob_lambda_b(float prob) {
 
 //Checa si la masa del Lambda b esta en el rango requerido, sí = 1, no = 0.
 //masa esta en MeV
-int corte_masa_lambda_b(float masa) {
+int corte_masa_lambda_b(LambdaBCandidate *lambda_b) {
 	//Valores en GeV
-	if (LAMBDA_B_MASS_LOWER_LIMIT < masa && masa < LAMBDA_B_MASS_UPPER_LIMIT){
+	if (LAMBDA_B_MASS_LOWER_LIMIT < lambda_b->getInvariantMass() && lambda_b->getInvariantMass() < LAMBDA_B_MASS_UPPER_LIMIT){
 		return 1;
 	}
 	return 0;
@@ -96,5 +91,5 @@ void fit_lambda_b(){
 	std::vector<vector<float>> poly_range = {{-0.135, -10, 10}};
 	unsigned int bin_number = 45;
 	
-	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
+//	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
 }

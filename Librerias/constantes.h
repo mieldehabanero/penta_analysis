@@ -20,6 +20,9 @@
 #define LAMBDA_0_MASS 1.115683
 #define LAMBDA_0_MASS_DELTA 0.000006
 
+#define LAMBDA_B_MASS 5.61958
+#define LAMBDA_B_MASS_DELTA 0.000017
+
 
 //Valores de los cortes definidos en el paper de CMS.
 //Cortes para candidatos J/Psi

@@ -17,11 +17,26 @@
 #include <TTreeReaderArray.h>
 
 // Headers needed by this particular selector
+#include <TH2.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+
 #include <vector>
 #include <string>
 
+#include "Librerias/constantes.h"
+#include "Librerias/operaciones.h"
+#include "Librerias/kaon.h"
+#include "Librerias/j_psi.h"
+#include "Librerias/lambda_0.h"
+#include "Librerias/lambda_b.h"
+#include "Librerias/Cuts/JPsiCuts.hpp"
+
 class main : public TSelector {
 public :
+	
+   JPsiCuts *jpsi_cuts;
+	
    TH1F           *lb_mass_histo;
    TH1F           *mumu_mass_histo;
    TH1F           *pionproton_mass_histo;
@@ -236,6 +251,7 @@ main::main(TTree * /*tree*/)
 void main::Reset()
 {
 	// Reset the data members to theit initial value
+	jpsi_cuts = 0;
 	
 	lb_mass_histo = 0;
 	mumu_mass_histo = 0;

@@ -6,7 +6,6 @@
 //
 
 #include "pentaquark.h"
-#include "operaciones.h"
 #include "fit.h"
 
 std::string data_path = PENTAQUARK_DATA_PATH;

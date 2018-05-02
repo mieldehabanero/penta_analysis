@@ -6,28 +6,18 @@
 //
 
 #include "kaon.h"
-#include "operaciones.h"
 #include "fit.h"
 
-int es_candidato_k_short(float k_short_mass){
+int es_candidato_k_short(KaonCandidate *k_short){
 	float valorInferior = (K_SHORT_MASS - K_SHORT_MASS_CUT);
 	float valorSuperior = (K_SHORT_MASS + K_SHORT_MASS_CUT);
 	
-	if (valorInferior < k_short_mass && k_short_mass < valorSuperior){
+	if (valorInferior < k_short->getInvariantMass() && k_short->getInvariantMass() < valorSuperior){
 		return 1;
 	}
 	return 0;
 }
 
-float calcula_energia_k_short(std::vector<float>pion_p1, std::vector<float>pion_p2){
-	float pion_p1_magnitude = norma_tres(pion_p1[0], pion_p1[1], pion_p1[2]);
-	float pion_p2_magnitude = norma_tres(pion_p2[0], pion_p2[1], pion_p2[2]);
-	
-	float pion_e1 = calcula_energia_relativista(PION_MASS, pion_p1_magnitude);
-	float pion_e2 = calcula_energia_relativista(PION_MASS, pion_p2_magnitude);
-	float k_short_e = pion_e1 + pion_e2;
-	return k_short_e;
-}
 
 void fit_k_short(){
 	std::string data_path = "Resultados/candidatos_ks.root";
@@ -43,6 +33,6 @@ void fit_k_short(){
 	std::vector<vector<float>> poly_range = {{-0.135, -10, 10}};
 	std::vector<float> background_fraction = {0.525, 0., 1.};
 	unsigned int bin_number = 48;
-	
-	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
+//	
+//	fit_double_gauss(data_path, ntuple_name, variable_name, variable_title, variable_description, variable_range, mean_range, sigma1_range, sigma2_range, sigma_fraction, poly_range, background_fraction, bin_number);
 }
