@@ -121,6 +121,9 @@ Bool_t main::Process(Long64_t entry)
 	//Se usa para todas las partículas
 	prim_vtx = {*priVtxX, *priVtxY, *priVtxZ};
 	
+	JPsiCuts *jpsi_cuts = new JPsiCuts();
+	LambdaCuts *lambda_cuts = new LambdaCuts();
+	
 	for(unsigned int i = 0; i < *nB; i++){
 		MuonCandidate *muon_1 = new MuonCandidate(B_J_px1.At(i), B_J_py1.At(i), B_J_pz1.At(i));
 		MuonCandidate *muon_2 = new MuonCandidate(B_J_px2.At(i), B_J_py2.At(i), B_J_pz2.At(i));
@@ -134,7 +137,6 @@ Bool_t main::Process(Long64_t entry)
 		jpsi->setDecayDistanceError(JDecayVtxXE.At(i), JDecayVtxYE.At(i), *priVtxXE, *priVtxYE);
 		
 		//Se le aplicó una correción a los momentos de los muones para que den exactamente la masa del J/Psi
-		JPsiCuts *jpsi_cuts = new JPsiCuts();
 		es_candidato_j_psi = jpsi_cuts->applyCuts(jpsi);
 
 		//Si es un candidato a J/Psi, continúa
@@ -175,14 +177,13 @@ Bool_t main::Process(Long64_t entry)
 		
 		KaonCandidate *k_short = new KaonCandidate(pion, pion_mismatched);
 
-		es_candidato_lambda0 = es_candidato_lambda_0(proton, pion, lambda);
+		es_candidato_lambda0 = lambda_cuts->applyCuts(lambda);
 
 		es_candidato_kaon = es_candidato_k_short(k_short);
 		pionpion_mass_histo->Fill(k_short->getInvariantMass());
 		tree_candidatos_ks->Fill();
 
 		//Si es un candidato a Lambda_0, continúa
-		masa_candidato_lambda_0 = corte_masa_lambda_0(lambda);
 		if(!es_candidato_kaon && es_candidato_lambda0){
 			tree_candidatos_lambda_0->Fill();
 			pionproton_mass_histo->Fill(lambda->getInvariantMass());
@@ -195,7 +196,7 @@ Bool_t main::Process(Long64_t entry)
 
 		es_candidato_lb = es_candidato_lambda_b(lambda_b);
 
-		if(es_candidato_j_psi && !es_candidato_kaon && es_candidato_lambda0 && masa_candidato_lambda_0 && es_candidato_lb){
+		if(es_candidato_j_psi && !es_candidato_kaon && es_candidato_lambda0 && es_candidato_lb){
 			lb_mass_histo->Fill(lambda_b->getInvariantMass());
 			lb_mass_histo_2->Fill(lambda_b->getInvariantMass());
 			tree_candidatos_lambda_b->Fill();
