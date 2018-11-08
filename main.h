@@ -27,7 +27,6 @@
 #include "Librerias/constantes.h"
 #include "Librerias/operaciones.h"
 #include "Librerias/kaon.h"
-#include "Librerias/j_psi.h"
 #include "Librerias/lambda_0.h"
 #include "Librerias/lambda_b.h"
 #include "Librerias/Cuts/JPsiCuts.hpp"
