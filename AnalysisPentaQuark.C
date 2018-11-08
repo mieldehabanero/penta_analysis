@@ -1,5 +1,5 @@
-#define main_cxx
-// The class definition in main.h has been generated automatically
+#define AnalysisPentaQuark_cxx
+// The class definition in AnalysisPentaQuark.h has been generated automatically
 // by the ROOT utility TTree::MakeSelector(). This class is derived
 // from the ROOT class TSelector. For more information on the TSelector
 // framework see $ROOTSYS/README/README.SELECTOR or the ROOT User Manual.
@@ -19,15 +19,15 @@
 //
 // To use this file, try the following session on your Tree T:
 //
-// root> T->Process("main.C")
-// root> T->Process("main.C","some options")
-// root> T->Process("main.C+")
+// root> T->Process("AnalysisPentaQuark.C")
+// root> T->Process("AnalysisPentaQuark.C","some options")
+// root> T->Process("AnalysisPentaQuark.C+")
 //
 
 
-#include "main.h"
+#include "AnalysisPentaQuark.h"
 
-void main::Begin(TTree * /*tree*/)
+void AnalysisPentaQuark::Begin(TTree * /*tree*/)
 {
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
@@ -36,7 +36,7 @@ void main::Begin(TTree * /*tree*/)
    TString option = GetOption();
 }
 
-void main::SlaveBegin(TTree * /*tree*/)
+void AnalysisPentaQuark::SlaveBegin(TTree * /*tree*/)
 {
    // The SlaveBegin() function is called after the Begin() function.
    // When running with PROOF SlaveBegin() is called on each slave server.
@@ -88,7 +88,7 @@ void main::SlaveBegin(TTree * /*tree*/)
 	fOutput->Add(tree_generador_ruido);
 }
 
-Bool_t main::Process(Long64_t entry)
+Bool_t AnalysisPentaQuark::Process(Long64_t entry)
 {
    // The Process() function is called for each entry in the tree (or possibly
    // keyed object in the case of PROOF) to be processed. The entry argument
@@ -191,7 +191,7 @@ Bool_t main::Process(Long64_t entry)
    return kTRUE;
 }
 
-void main::SlaveTerminate()
+void AnalysisPentaQuark::SlaveTerminate()
 {
    // The SlaveTerminate() function is called after all entries or objects
    // have been processed. When running with PROOF SlaveTerminate() is called
@@ -199,7 +199,7 @@ void main::SlaveTerminate()
 
 }
 
-void main::Terminate()
+void AnalysisPentaQuark::Terminate()
 {
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present

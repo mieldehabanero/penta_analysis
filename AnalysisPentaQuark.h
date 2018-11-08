@@ -5,8 +5,8 @@
 // found on file: Datos/run_2012a.root
 //////////////////////////////////////////////////////////
 
-#ifndef main_h
-#define main_h
+#ifndef AnalysisPentaQuark_h
+#define AnalysisPentaQuark_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -34,13 +34,12 @@
 #include "Librerias/Particles/KaonCandidate.hpp"
 #include "Librerias/Particles/LambdaCandidate.hpp"
 #include "Librerias/Particles/LambdaBCandidate.hpp"
-
 #include "Librerias/Cuts/JPsiCuts.hpp"
-#include "Librerias/Cuts/LambdaCuts.hpp"
 #include "Librerias/Cuts/KaonCuts.hpp"
+#include "Librerias/Cuts/LambdaCuts.hpp"
 #include "Librerias/Cuts/LambdaBCuts.hpp"
 
-class main : public TSelector {
+class AnalysisPentaQuark : public TSelector {
 public :
    TH1F           *lb_mass_histo;
    TH1F           *mumu_mass_histo;
@@ -213,8 +212,8 @@ public :
    TTreeReaderArray<int> mupNPHits = {fReader, "mupNPHits"};
 
 
-   main(TTree * /*tree*/ =0);
-   virtual ~main() { }
+   AnalysisPentaQuark(TTree * /*tree*/ =0);
+   virtual ~AnalysisPentaQuark() { }
    void    Reset();
    virtual Int_t   Version() const { return 2; }
    virtual void    Begin(TTree *tree);
@@ -230,21 +229,21 @@ public :
    virtual void    SlaveTerminate();
    virtual void    Terminate();
 
-   ClassDef(main,0);
+   ClassDef(AnalysisPentaQuark,0);
 
 };
 
 #endif
 
-#ifdef main_cxx
-main::main(TTree * /*tree*/)
+#ifdef AnalysisPentaQuark_cxx
+AnalysisPentaQuark::AnalysisPentaQuark(TTree * /*tree*/)
 {
 	// Constructor
 	
 	Reset();
 }
 //_____________________________________________________________________
-void main::Reset()
+void AnalysisPentaQuark::Reset()
 {
 	// Reset the data members to theit initial value
 	JPsiCuts *jpsi_cuts = 0;
@@ -300,7 +299,7 @@ void main::Reset()
 	es_candidato_lambda_b = 0;
 }
 
-void main::Init(TTree *tree)
+void AnalysisPentaQuark::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the reader is initialized.
@@ -312,7 +311,7 @@ void main::Init(TTree *tree)
    fReader.SetTree(tree);
 }
 
-Bool_t main::Notify()
+Bool_t AnalysisPentaQuark::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -324,4 +323,4 @@ Bool_t main::Notify()
 }
 
 
-#endif // #ifdef main_cxx
+#endif // #ifdef AnalysisPentaQuark_cxx
