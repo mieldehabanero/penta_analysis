@@ -123,6 +123,7 @@ Bool_t main::Process(Long64_t entry)
 	
 	JPsiCuts *jpsi_cuts = new JPsiCuts();
 	LambdaCuts *lambda_cuts = new LambdaCuts();
+	KaonCuts *kaon_cuts = new KaonCuts();
 	
 	for(unsigned int i = 0; i < *nB; i++){
 		MuonCandidate *muon_1 = new MuonCandidate(B_J_px1.At(i), B_J_py1.At(i), B_J_pz1.At(i));
@@ -179,7 +180,7 @@ Bool_t main::Process(Long64_t entry)
 
 		es_candidato_lambda0 = lambda_cuts->applyCuts(lambda);
 
-		es_candidato_kaon = es_candidato_k_short(k_short);
+		es_candidato_kaon = kaon_cuts->applyCuts(k_short);
 		pionpion_mass_histo->Fill(k_short->getInvariantMass());
 		tree_candidatos_ks->Fill();
 
