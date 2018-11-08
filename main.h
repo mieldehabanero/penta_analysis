@@ -26,10 +26,10 @@
 
 #include "Librerias/constantes.h"
 #include "Librerias/operaciones.h"
-#include "Librerias/lambda_b.h"
 #include "Librerias/Cuts/JPsiCuts.hpp"
 #include "Librerias/Cuts/LambdaCuts.hpp"
 #include "Librerias/Cuts/KaonCuts.hpp"
+#include "Librerias/Cuts/LambdaBCuts.hpp"
 
 class main : public TSelector {
 public :
@@ -89,7 +89,7 @@ public :
 	std::vector<float> lambda_b_p;
 	float lambda_b_e;
 	float lambda_b_invariant_mass;
-	int es_candidato_lb;
+	int es_candidato_lambda_b;
 	
    TTreeReader     fReader;  //!the tree reader
    TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
@@ -306,7 +306,7 @@ void main::Reset()
 	lambda_b_p = {0, 0, 0};
 	lambda_b_e = 0;
 	lambda_b_invariant_mass = 0;
-	es_candidato_lb = 0;
+	es_candidato_lambda_b = 0;
 }
 
 void main::Init(TTree *tree)

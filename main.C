@@ -124,6 +124,7 @@ Bool_t main::Process(Long64_t entry)
 	JPsiCuts *jpsi_cuts = new JPsiCuts();
 	LambdaCuts *lambda_cuts = new LambdaCuts();
 	KaonCuts *kaon_cuts = new KaonCuts();
+	LambdaBCuts *lambda_b_cuts = new LambdaBCuts();
 	
 	for(unsigned int i = 0; i < *nB; i++){
 		MuonCandidate *muon_1 = new MuonCandidate(B_J_px1.At(i), B_J_py1.At(i), B_J_pz1.At(i));
@@ -195,9 +196,9 @@ Bool_t main::Process(Long64_t entry)
 		LambdaBCandidate *lambda_b = new LambdaBCandidate(jpsi, lambda);
 		lambda_b->setProbability(B_Prob.At(i));
 
-		es_candidato_lb = es_candidato_lambda_b(lambda_b);
+		es_candidato_lambda_b = lambda_b_cuts->applyCuts(lambda_b);
 
-		if(es_candidato_j_psi && !es_candidato_kaon && es_candidato_lambda0 && es_candidato_lb){
+		if(es_candidato_j_psi && !es_candidato_kaon && es_candidato_lambda0 && es_candidato_lambda_b){
 			lb_mass_histo->Fill(lambda_b->getInvariantMass());
 			lb_mass_histo_2->Fill(lambda_b->getInvariantMass());
 			tree_candidatos_lambda_b->Fill();
