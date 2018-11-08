@@ -7,5 +7,8 @@
 
 #include "MuonCandidate.hpp"
 
-MuonCandidate::MuonCandidate(float px, float py, float pz):ParticleCandidate(px, py, pz, MUON_MASS) {
+MuonCandidate::MuonCandidate(float px, float py, float pz):ParticleCandidate(px, py, pz, MUON_MASS) {}
+
+double MuonCandidate::getETA(){
+	return four_momentum.Eta();
 }

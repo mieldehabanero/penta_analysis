@@ -27,6 +27,8 @@ public:
 	float getDecayDistanceSigma();
 	float getCosAlpha();
 	float getD0Sigma();
+	ProtonCandidate getProton();
+	PionCandidate getPion();
 	
 private:
 	ProtonCandidate proton;

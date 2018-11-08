@@ -31,9 +31,9 @@ void LambdaCandidate::setDecayDistance(float x, float y){
 	dy = y;
 	d_xy = sqrt(pow(x, 2) + pow(y, 2));
 	
-	std::vector<float> p_vtx = four_momentum.getMomentumVtx();
+	TVector3 p_vtx = four_momentum.Vect();
 	
-	float p_xy_magnitud = sqrt(pow(p_vtx[0], 2) + pow(p_vtx[1], 2));
+	float p_xy_magnitud = this->getTransverseMomentum();
 	float d_xy_magnitude = sqrt(pow(dx, 2) + pow(dy, 2));
 	float dot_product = p_vtx[0]*dx + p_vtx[1]*dy;
 	
@@ -65,4 +65,12 @@ float LambdaCandidate::getCosAlpha(){
 
 float LambdaCandidate::getD0Sigma(){
 	return d_xy/sigma;
+}
+
+ProtonCandidate LambdaCandidate::getProton(){
+	return proton;
+}
+
+PionCandidate LambdaCandidate::getPion(){
+	return pion;
 }

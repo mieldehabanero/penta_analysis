@@ -8,27 +8,29 @@
 
 #include "ParticleCandidate.hpp"
 
-ParticleCandidate::ParticleCandidate(float px, float py, float pz, float mass):four_momentum(px, py, pz, mass) {
+ParticleCandidate::ParticleCandidate(float px, float py, float pz, float mass) {
 	mass_pdg = mass;
-	invariant_mass = sqrt(pow(this->getEnergy(), 2) -  pow(this->getMomentum(), 2));
+	float e = sqrt(pow(mass, 2) + pow(px, 2) + pow(py, 2) + pow(pz, 2));
+	four_momentum = TLorentzVector(px, py, pz, e);
+	invariant_mass = four_momentum.Mag();
 }
 
-ParticleCandidate::ParticleCandidate(FourMomentum fm, float mass){
-	four_momentum = fm;
+ParticleCandidate::ParticleCandidate(TLorentzVector fm, float mass){
 	mass_pdg = mass;
-	invariant_mass = sqrt(pow(this->getEnergy(), 2) -  pow(this->getMomentum(), 2));
+	four_momentum = TLorentzVector(fm);
+	invariant_mass = four_momentum.Mag();
 }
 
 float ParticleCandidate::getEnergy() {
-	return four_momentum.getEnergy();
+	return four_momentum.E();
 }
 
 float ParticleCandidate::getMomentum() {
-	return four_momentum.getMomentum();
+	return four_momentum.Vect().Mag();
 }
 
 float ParticleCandidate::getTransverseMomentum() {
-	return four_momentum.getTransverseMomentum();
+	return sqrt(pow(four_momentum.Px(), 2) + pow(four_momentum.Py(), 2));
 }
 
 float ParticleCandidate::getPDGMass() {
@@ -39,7 +41,7 @@ float ParticleCandidate::getInvariantMass(){
 	return invariant_mass;
 }
 	
-FourMomentum ParticleCandidate::getFourMomentum() {
+TLorentzVector ParticleCandidate::getFourMomentum() {
 	return four_momentum;
 }
 

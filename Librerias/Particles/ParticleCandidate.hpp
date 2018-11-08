@@ -8,7 +8,7 @@
 #ifndef ParticleCandidate_hpp
 #define ParticleCandidate_hpp
 
-#include "FourMomentum.hpp"
+#include "TLorentzVector.h"
 
 class ParticleCandidate {
 private:
@@ -16,11 +16,11 @@ private:
 	float invariant_mass;
 
 protected:
-	FourMomentum four_momentum;
+	TLorentzVector four_momentum;
 	
 public:
 	ParticleCandidate(float px, float py, float pz, float mass);
-	ParticleCandidate(FourMomentum fm, float mass);
+	ParticleCandidate(TLorentzVector fm, float mass);
 	
 	float getEnergy();
 	float getMomentum();
@@ -28,7 +28,7 @@ public:
 	
 	float getPDGMass();
 	float getInvariantMass();
-	FourMomentum getFourMomentum();
+	TLorentzVector getFourMomentum();
 	void fit();
 };
 
