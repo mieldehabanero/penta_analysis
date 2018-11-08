@@ -26,16 +26,6 @@
 
 
 #include "main.h"
-#include "Librerias/Particles/MuonCandidate.hpp"
-#include "Librerias/Particles/JPsiCandidate.hpp"
-
-#include "Librerias/Particles/ProtonCandidate.hpp"
-#include "Librerias/Particles/PionCandidate.hpp"
-#include "Librerias/Particles/KaonCandidate.hpp"
-#include "Librerias/Particles/LambdaCandidate.hpp"
-#include "Librerias/Particles/LambdaBCandidate.hpp"
-
-#include "Librerias/Cuts/JPsiCuts.hpp"
 
 void main::Begin(TTree * /*tree*/)
 {
@@ -117,20 +107,17 @@ Bool_t main::Process(Long64_t entry)
    // The return value is currently not used.
 
 	fReader.SetLocalEntry(entry);
-	
-	//Se usa para todas las partículas
-	prim_vtx = {*priVtxX, *priVtxY, *priVtxZ};
-	
-	JPsiCuts *jpsi_cuts = new JPsiCuts();
-	LambdaCuts *lambda_cuts = new LambdaCuts();
-	KaonCuts *kaon_cuts = new KaonCuts();
-	LambdaBCuts *lambda_b_cuts = new LambdaBCuts();
+		
+	jpsi_cuts = new JPsiCuts();
+	lambda_cuts = new LambdaCuts();
+	kaon_cuts = new KaonCuts();
+	lambda_b_cuts = new LambdaBCuts();
 	
 	for(unsigned int i = 0; i < *nB; i++){
-		MuonCandidate *muon_1 = new MuonCandidate(B_J_px1.At(i), B_J_py1.At(i), B_J_pz1.At(i));
-		MuonCandidate *muon_2 = new MuonCandidate(B_J_px2.At(i), B_J_py2.At(i), B_J_pz2.At(i));
+		muon_1 = new MuonCandidate(B_J_px1.At(i), B_J_py1.At(i), B_J_pz1.At(i));
+		muon_2 = new MuonCandidate(B_J_px2.At(i), B_J_py2.At(i), B_J_pz2.At(i));
 		
-		JPsiCandidate *jpsi = new JPsiCandidate(muon_1, muon_2);
+		jpsi = new JPsiCandidate(muon_1, muon_2);
 		jpsi->setProbability(B_J_Prob.At(i));
 		
 		//Vector desde el vértice primario al vértice de decaimiento del J/Psi: d_xy
@@ -147,17 +134,11 @@ Bool_t main::Process(Long64_t entry)
 			tree_candidatos_jpsi->Fill();
 			mumu_mass_histo->Fill(jpsi_temp_mass);
 		}
-		
-		charged_p1 = {B_lamb_px1.At(i), B_lamb_py1.At(i), B_lamb_pz1.At(i)};
-		charged_p2 = {B_lamb_px2.At(i), B_lamb_py2.At(i), B_lamb_pz2.At(i)};
 
 		//Estos valores se calculan aquí porque se necesitan en calculos ajenos al Lambda_0
-		charged_p1_magnitude = norma_tres(charged_p1[0], charged_p1[1], charged_p1[2]);
-		charged_p2_magnitude = norma_tres(charged_p2[0], charged_p2[1], charged_p2[2]);
+		charged_p1_magnitude = norma_tres(B_lamb_px1.At(i), B_lamb_py1.At(i), B_lamb_pz1.At(i));
+		charged_p2_magnitude = norma_tres(B_lamb_px2.At(i), B_lamb_py2.At(i), B_lamb_pz2.At(i));
 
-		ProtonCandidate *proton;
-		PionCandidate *pion;
-		PionCandidate *pion_mismatched;
 		//Se distingue entre pión y protón (p_p > p_π)
 		if (charged_p1_magnitude > charged_p2_magnitude){
 			proton = new ProtonCandidate(B_lamb_px1.At(i), B_lamb_py1.At(i), B_lamb_pz1.At(i));
@@ -171,13 +152,13 @@ Bool_t main::Process(Long64_t entry)
 
 		//Vector desde el vértice primario al vértice de decaimiento del Lambda_0: d_xy
 		//No se usa z, porque se elimina en el producto punto con pt
-		LambdaCandidate *lambda = new LambdaCandidate(proton, pion);
+		lambda = new LambdaCandidate(proton, pion);
 		lambda->setProbability(B_lamb_Prob.At(i));
 		lambda->setDecayDistance(VDecayVtxX.At(i)-*priVtxX, VDecayVtxY.At(i)-*priVtxY);
 		lambda->setDecayDistanceError(VDecayVtxXE.At(i), VDecayVtxYE.At(i), *priVtxXE, *priVtxYE);
 		lambda->setChi2(B_lamb_chi2.At(i));
 		
-		KaonCandidate *k_short = new KaonCandidate(pion, pion_mismatched);
+		k_short = new KaonCandidate(pion, pion_mismatched);
 
 		es_candidato_lambda0 = lambda_cuts->applyCuts(lambda);
 
@@ -193,7 +174,7 @@ Bool_t main::Process(Long64_t entry)
 
 		//Checa que sea un candidate de Lambda^b_0
 		//Valores calculados en el GRID
-		LambdaBCandidate *lambda_b = new LambdaBCandidate(jpsi, lambda);
+		lambda_b = new LambdaBCandidate(jpsi, lambda);
 		lambda_b->setProbability(B_Prob.At(i));
 
 		es_candidato_lambda_b = lambda_b_cuts->applyCuts(lambda_b);

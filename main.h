@@ -26,6 +26,15 @@
 
 #include "Librerias/constantes.h"
 #include "Librerias/operaciones.h"
+
+#include "Librerias/Particles/MuonCandidate.hpp"
+#include "Librerias/Particles/JPsiCandidate.hpp"
+#include "Librerias/Particles/ProtonCandidate.hpp"
+#include "Librerias/Particles/PionCandidate.hpp"
+#include "Librerias/Particles/KaonCandidate.hpp"
+#include "Librerias/Particles/LambdaCandidate.hpp"
+#include "Librerias/Particles/LambdaBCandidate.hpp"
+
 #include "Librerias/Cuts/JPsiCuts.hpp"
 #include "Librerias/Cuts/LambdaCuts.hpp"
 #include "Librerias/Cuts/KaonCuts.hpp"
@@ -33,9 +42,6 @@
 
 class main : public TSelector {
 public :
-	
-   JPsiCuts *jpsi_cuts;
-	
    TH1F           *lb_mass_histo;
    TH1F           *mumu_mass_histo;
    TH1F           *pionproton_mass_histo;
@@ -47,48 +53,39 @@ public :
 	TTree* tree_candidatos_lambda_0;
 	TTree* tree_candidatos_jpsi;
 	TTree* tree_candidatos_ks;
-
-	std::vector<float> prim_vtx;
-	std::vector<float> muon_p1;
-	std::vector<float> muon_p2;
-	float muon_prob;
-	std::vector<float> jpsi_L_xy_E;
-	std::vector<float> jpsi_d_xy;
-	float jpsi_e;
-	std::vector<float> jpsi_p;
-	float jpsi_invariant_mass;
-	float jpsi_temp_mass;
-	int es_candidato_j_psi;
 	
-	std::vector<float> charged_p1;
-	std::vector<float> charged_p2;
-	std::vector<float> proton_p;
-	std::vector<float> pion_p;
-	float charged_prob;
-	std::vector<float> lambda_0_L_xy_E;
-	float lambda_0_chi2;
-	std::vector<float> lambda_0_d_xy;
+	JPsiCuts *jpsi_cuts;
+	LambdaCuts *lambda_cuts;
+	KaonCuts *kaon_cuts;
+	LambdaBCuts *lambda_b_cuts;
+	
+	MuonCandidate *muon_1;
+	MuonCandidate *muon_2;
+	JPsiCandidate *jpsi;
+	ProtonCandidate *proton;
+	PionCandidate *pion;
+	PionCandidate *pion_mismatched;
+	LambdaCandidate *lambda;
+	KaonCandidate *k_short;
+	LambdaBCandidate *lambda_b;
+	
+	float jpsi_e;
+	float lambda_0_e;
+	
+	std::vector<float> jpsi_p;
+	std::vector<float> lambda_0_p;
 	float charged_p1_magnitude;
 	float charged_p2_magnitude;
-	float lambda_0_e;
-	float proton_pt_magnitude;
-	float pion_pt_magnitude;
-	std::vector<float> lambda_0_p;
+	
+	float jpsi_temp_mass;
+	float jpsi_invariant_mass;
 	float lambda_0_invariant_mass;
-	
-	std::vector<float> k_short_p;
-	float k_short_e;
 	float k_short_invariant_mass;
+	float lambda_b_invariant_mass;
 	
+	int es_candidato_j_psi;
 	int es_candidato_lambda0;
 	int es_candidato_kaon;
-	
-	int masa_candidato_lambda_0;
-	float jpsi_l0_prob;
-	
-	std::vector<float> lambda_b_p;
-	float lambda_b_e;
-	float lambda_b_invariant_mass;
 	int es_candidato_lambda_b;
 	
    TTreeReader     fReader;  //!the tree reader
@@ -250,7 +247,20 @@ main::main(TTree * /*tree*/)
 void main::Reset()
 {
 	// Reset the data members to theit initial value
-	jpsi_cuts = 0;
+	JPsiCuts *jpsi_cuts = 0;
+	LambdaCuts *lambda_cuts = 0;
+	KaonCuts *kaon_cuts = 0;
+	LambdaBCuts *lambda_b_cuts = 0;
+	
+	MuonCandidate *muon_1 = 0;
+	MuonCandidate *muon_2 = 0;
+	JPsiCandidate *jpsi = 0;
+	ProtonCandidate *proton = 0;
+	PionCandidate *pion = 0;
+	PionCandidate *pion_mismatched = 0;
+	LambdaCandidate *lambda = 0;
+	KaonCandidate *k_short = 0;
+	LambdaBCandidate *lambda_b = 0;
 	
 	lb_mass_histo = 0;
 	mumu_mass_histo = 0;
@@ -263,13 +273,11 @@ void main::Reset()
 	tree_candidatos_jpsi = 0;
 	tree_candidatos_ks = 0;
 	tree_generador_ruido = 0;
-
-	prim_vtx = {0, 0, 0};
-	muon_p1 = {0, 0, 0};
-	muon_p2 = {0, 0, 0};
-	muon_prob = 0;
-	jpsi_L_xy_E = {0, 0, 0};
-	jpsi_d_xy = {0, 0, 0};
+	
+	jpsi_cuts = 0;
+	lambda_cuts = 0;
+	kaon_cuts = 0;
+	lambda_b_cuts = 0;
 
 	jpsi_e = 0;
 	jpsi_p = {0, 0, 0};
@@ -277,34 +285,17 @@ void main::Reset()
 	jpsi_temp_mass = 0;
 	es_candidato_j_psi = 0;
 	
-	charged_p1 = {0, 0, 0};
-	charged_p2 = {0, 0, 0};
-	proton_p = {0, 0, 0};
-	pion_p = {0, 0, 0};
-	charged_prob = 0;
-	lambda_0_L_xy_E = {0, 0, 0};
-	lambda_0_d_xy = {0, 0, 0};
-	lambda_0_chi2 = 0;
 	charged_p1_magnitude = 0;
 	charged_p2_magnitude = 0;
 	lambda_0_e = 0;
-	proton_pt_magnitude = 0;
-	pion_pt_magnitude = 0;
 	lambda_0_p = {0, 0, 0};
 	lambda_0_invariant_mass = 0;
 	
-	k_short_p = {0, 0, 0};
-	k_short_e = 0;
 	k_short_invariant_mass = 0;
 	
 	es_candidato_lambda0 = 0;
 	es_candidato_kaon = 0;
 	
-	masa_candidato_lambda_0 = 0;
-	jpsi_l0_prob = 0;
-	
-	lambda_b_p = {0, 0, 0};
-	lambda_b_e = 0;
 	lambda_b_invariant_mass = 0;
 	es_candidato_lambda_b = 0;
 }
